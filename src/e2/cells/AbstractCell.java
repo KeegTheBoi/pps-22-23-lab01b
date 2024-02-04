@@ -1,4 +1,4 @@
-package e2.Cells;
+package e2.cells;
 import java.util.*;
 
 public abstract class AbstractCell implements Cell{

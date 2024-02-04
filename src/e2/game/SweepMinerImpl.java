@@ -1,23 +1,24 @@
 package e2.game;
 
 import e2.Coord;
-import e2.Cells.Cell;
-import e2.Cells.Cells;
-import e2.Cells.DecoratorCell;
-import e2.Cells.MineCell;
-import e2.Cells.SimpleCell;
+import e2.cells.Cell;
+import e2.cells.Cells;
+import e2.cells.DecoratorCell;
+import e2.cells.MineCell;
+import e2.cells.SimpleCell;
 import e2.gameBoard.Board;
 
 import java.util.*;
+import java.util.stream.*;
 import static java.util.function.Predicate.not;
 
 public class SweepMinerImpl implements SweepMiner{
     
-    private Board<Cell> board;
+    private Board<Coord, Cell> board;
     private Double limit;
     private int hitted;
 
-    public SweepMinerImpl(Board<Cell> board) {
+    public SweepMinerImpl(Board<Coord, Cell> board) {
         this.board = board;
     }
 
@@ -38,14 +39,14 @@ public class SweepMinerImpl implements SweepMiner{
         double scount = ratio * board.bound();
         limit = board.bound() - (filler - scount);
         while(board.mapSize() < (int)Math.ceil(limit)) {
-            board.setValue(board.randomCoord(), new MineCell());
+            board.setValue(this.randomCoord(), new MineCell());
         }
         System.out.println(limit);
     }
 
     public void fillRemaining() {
         // alternative using iterable
-        board.all().filter(c -> Objects.isNull(board.getCell(c)))
+        this.all().filter(c -> Objects.isNull(board.getCell(c)))
             .forEach(pos -> board.setValue(pos, new SimpleCell(countAdjaxBombs(pos))));
     }
 
@@ -55,7 +56,7 @@ public class SweepMinerImpl implements SweepMiner{
     }
 
     private int countAdjaxBombs(Coord pos) {
-        return (int)board.adjaxOf(pos).stream().map(board::getCell)
+        return (int)this.adjaxOf(pos).stream().map(board::getCell)
             .filter(Objects::nonNull)
             .filter(Cells::isBomb).count();
     }
@@ -69,7 +70,7 @@ public class SweepMinerImpl implements SweepMiner{
     public void recursiveDiscoveryOf(Coord c) {
         action(c);
         Optional.of(c).map(board::getCell).filter(Cells::isEmpty).filter(e -> !this.isOver(c))
-            .ifPresent(h -> board.adjaxOf(c).stream()
+            .ifPresent(h -> this.adjaxOf(c).stream()
                 .map(board::getCell)
                 .filter(Cells::isVeiled)
                 .filter(Cells::isValuable)
@@ -78,6 +79,16 @@ public class SweepMinerImpl implements SweepMiner{
                 .map(Optional::get)
                 .forEach(this::recursiveDiscoveryOf)
             );
+    }
+
+    private Set<Coord> adjaxOf(Coord pos) {
+        return all().filter(not(pos::equals)).filter(pos::isAdjax).collect(Collectors.toSet());
+    }
+
+    private Stream<Coord> all() {
+        return IntStream.range(0, board.bound())
+            .boxed().flatMap(i -> IntStream.range(0, board.bound())
+                .mapToObj(j -> new Coord(i, j)));
     }
 
     @Override
@@ -90,6 +101,10 @@ public class SweepMinerImpl implements SweepMiner{
         return this.hitted;
     }
 
+    private Coord randomCoord() {
+        Random rand = new Random();
+        return new Coord(rand.nextInt(board.bound()), rand.nextInt(board.bound()));
+    }
 
 
     

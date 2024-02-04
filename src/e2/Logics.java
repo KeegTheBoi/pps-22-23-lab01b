@@ -1,8 +1,6 @@
 package e2;
 
-import java.util.Optional;
-
-import e2.Cells.Cell;
+import e2.cells.Cell;
 
 public interface Logics {
 

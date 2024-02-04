@@ -1,16 +1,8 @@
-package e2.Cells;
+package e2.cells;
 
 import java.util.*;
 
 public interface Cell {
-
-    enum Type{
-        MINE, GROUND
-    }
-
-    enum Status {
-        VISIBLE, INVISIBLE
-    }
 
     Type getType();
 

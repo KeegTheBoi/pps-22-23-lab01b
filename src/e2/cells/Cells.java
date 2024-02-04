@@ -1,7 +1,5 @@
-package e2.Cells;
+package e2.cells;
 
-import e2.Cells.Cell.Type;
-import e2.Cells.Cell.Status;
 
 public class Cells {
     

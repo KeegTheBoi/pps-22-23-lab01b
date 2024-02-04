@@ -3,14 +3,12 @@ package e2;
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
-import javax.swing.plaf.ColorUIResource;
 
-import e2.Cells.Cell;
-import e2.Cells.Cell.Status;
-import e2.Cells.Cells;
+import e2.cells.Cell;
+import e2.cells.Cells;
+import e2.cells.Status;
 
 import java.util.*;
-import java.util.Map.Entry;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -109,12 +107,9 @@ public class GUI extends JFrame {
         buttons.forEach((k, v) -> {
             var cell = logics.getResult(v);
             if(cell.getStatus() == Status.VISIBLE && Cells.isValuable(cell)) {
-                k.setBackground(mapColor.get(cell.getCount().get()));
-                
+                k.setBackground(mapColor.get(cell.getCount().get()));  
                 k.setText("<html><font color = black>"+getText(cell)+"</font></html>");
                 k.setEnabled(false);
-                
-                
             } else if (cell.isFlagged()) {
                 k.setBackground(Color.RED);
                 k.setText("⚑");
@@ -122,8 +117,6 @@ public class GUI extends JFrame {
                 k.setText("");
                 k.setBackground(Color.BLACK);
             }
-            
-            
         });
     }
     

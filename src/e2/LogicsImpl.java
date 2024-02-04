@@ -1,16 +1,17 @@
 package e2;
-import e2.Cells.Cell;
+import e2.cells.Cell;
 import e2.game.*;
 import e2.gameBoard.*;
+
 
 public class LogicsImpl implements Logics {
 
     private Coord current;
-    private final Board<Cell> board;
+    private final Board<Coord, Cell> board;
     private final SweepMiner game;
 
     public LogicsImpl(int size, int difficulty) {
-        this.board = new BoardImpl<Cell>(size);
+        this.board = new BoardImpl<Coord, Cell>(size);
         this.game = new SweepMinerImpl(board);
         this.game.seedBombs(difficulty);
         this.game.fillRemaining();

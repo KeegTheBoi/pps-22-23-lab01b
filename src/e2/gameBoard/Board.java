@@ -1,27 +1,19 @@
 package e2.gameBoard;
 
 import java.util.*;
-import java.util.stream.*;
 
-import e2.Coord;
 
-public interface Board<C> {
+public interface Board<P, C> {
 
     int size();
 
     int bound();
 
-    C getCell(Coord coord);
+    C getCell(P coord);
 
-    Optional<Coord> getCoord(C c);
+    Optional<P> getCoord(C c);
 
-    Coord randomCoord();
-
-    Set<Coord> adjaxOf(Coord pos);
-
-    void setValue(Coord coord, C c);
-
-    Stream<Coord> all();
+    void setValue(P coord, C c);
 
     int mapSize();
 

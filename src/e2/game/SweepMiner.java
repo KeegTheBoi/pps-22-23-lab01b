@@ -1,7 +1,7 @@
 package e2.game;
 
 import e2.Coord;
-import e2.Cells.Cell;
+import e2.cells.Cell;
 
 public interface SweepMiner {
     

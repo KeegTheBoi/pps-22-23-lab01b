@@ -1,17 +1,11 @@
 package e2.gameBoard;
 
 import java.util.*;
-import java.util.stream.*;
 
-import e2.Coord;
-
-import static java.util.function.Predicate.not;
-
-
-public class BoardImpl<C> implements Board<C> {
+public class BoardImpl<P, C> implements Board<P, C> {
 
     private int size;
-    private final Map<Coord, C> boardMap;
+    private final Map<P, C> boardMap;
 
     public BoardImpl(int size) {
         this.size = size;
@@ -24,16 +18,7 @@ public class BoardImpl<C> implements Board<C> {
     }
 
     @Override
-    public Set<Coord> adjaxOf(Coord pos) {
-        return all().filter(not(pos::equals)).filter(pos::isAdjax).collect(Collectors.toSet());
-    }
-
-    public Stream<Coord> all() {
-        return IntStream.range(0, size).boxed().flatMap(i -> IntStream.range(0, size).mapToObj(j -> new Coord(i, j)));
-    }
-
-    @Override
-    public Optional<Coord> getCoord(C c) {
+    public Optional<P> getCoord(C c) {
         return boardMap.entrySet().stream()
             .filter(e -> e.getValue().equals(c))
             .map(Map.Entry::getKey)
@@ -41,18 +26,12 @@ public class BoardImpl<C> implements Board<C> {
     }
 
     @Override
-    public Coord randomCoord() {
-        Random rand = new Random();
-        return new Coord(rand.nextInt(size), rand.nextInt(size));
-    }
-
-    @Override
-    public C getCell(Coord c) {
+    public C getCell(P c) {
         return boardMap.get(c); 
     }
 
     @Override
-    public void setValue(Coord coord, C cell) {
+    public void setValue(P coord, C cell) {
         this.boardMap.put(coord, cell);
     }
 
