@@ -5,7 +5,7 @@ import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
 
 import e2.cells.Cell;
-import e2.cells.Cells;
+import e2.cells.CellsUtils;
 import e2.cells.Status;
 
 import java.util.*;
@@ -106,7 +106,7 @@ public class GUI extends JFrame {
     private void drawBoard() {
         buttons.forEach((k, v) -> {
             var cell = logics.getResult(v);
-            if(cell.getStatus() == Status.VISIBLE && Cells.isValuable(cell)) {
+            if(cell.getStatus() == Status.VISIBLE && CellsUtils.isValuable(cell)) {
                 k.setBackground(mapColor.get(cell.getCount().get()));  
                 k.setText("<html><font color = black>"+getText(cell)+"</font></html>");
                 k.setEnabled(false);

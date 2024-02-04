@@ -2,10 +2,10 @@ package e2.game;
 
 import e2.Coord;
 import e2.cells.Cell;
-import e2.cells.Cells;
-import e2.cells.DecoratorCell;
+import e2.cells.CellsUtils;
+import e2.cells.FlaggedDecoCell;
 import e2.cells.MineCell;
-import e2.cells.SimpleCell;
+import e2.cells.GroundCell;
 import e2.gameBoard.Board;
 
 import java.util.*;
@@ -24,10 +24,10 @@ public class SweepMinerImpl implements SweepMiner{
 
     @Override
     public Cell handleFlag(Coord c) {
-        if(board.getCell(c) instanceof DecoratorCell cell) {
+        if(board.getCell(c) instanceof FlaggedDecoCell cell) {
             return cell.unwrap();
         }
-        return new DecoratorCell(board.getCell(c));
+        return new FlaggedDecoCell(board.getCell(c));
     }
 
 
@@ -47,7 +47,7 @@ public class SweepMinerImpl implements SweepMiner{
     public void fillRemaining() {
         // alternative using iterable
         this.all().filter(c -> Objects.isNull(board.getCell(c)))
-            .forEach(pos -> board.setValue(pos, new SimpleCell(countAdjaxBombs(pos))));
+            .forEach(pos -> board.setValue(pos, new GroundCell(countAdjaxBombs(pos))));
     }
 
     @Override
@@ -58,22 +58,21 @@ public class SweepMinerImpl implements SweepMiner{
     private int countAdjaxBombs(Coord pos) {
         return (int)this.adjaxOf(pos).stream().map(board::getCell)
             .filter(Objects::nonNull)
-            .filter(Cells::isBomb).count();
+            .filter(CellsUtils::isBomb).count();
     }
 
-    public void action(Coord pos) {
+    public void unveil(Coord pos) {
         this.hitted++;
-        System.out.println(hitted);
         board.getCell(pos).reveal();
     }
 
     public void recursiveDiscoveryOf(Coord c) {
-        action(c);
-        Optional.of(c).map(board::getCell).filter(Cells::isEmpty).filter(e -> !this.isOver(c))
+        unveil(c);
+        Optional.of(c).map(board::getCell).filter(CellsUtils::isEmpty).filter(e -> !this.isOver(c))
             .ifPresent(h -> this.adjaxOf(c).stream()
                 .map(board::getCell)
-                .filter(Cells::isVeiled)
-                .filter(Cells::isValuable)
+                .filter(CellsUtils::isVeiled)
+                .filter(CellsUtils::isValuable)
                 .map(board::getCoord)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -93,7 +92,7 @@ public class SweepMinerImpl implements SweepMiner{
 
     @Override
     public boolean isOver(Coord c) {
-        return Cells.isBomb(board.getCell(c));
+        return CellsUtils.isBomb(board.getCell(c));
     }
 
     @Override

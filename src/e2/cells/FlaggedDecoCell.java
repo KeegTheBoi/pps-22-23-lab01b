@@ -2,11 +2,11 @@ package e2.cells;
 
 import java.util.Optional;
 
-public class DecoratorCell extends AbstractCell{
+public class FlaggedDecoCell extends AbstractCell{
 
     private Cell decorated;
 
-    public DecoratorCell(Cell cell) {
+    public FlaggedDecoCell(Cell cell) {
         super(Status.INVISIBLE);
         this.decorated = cell;
         this.flag = true;

@@ -1,7 +1,7 @@
 package e2.cells;
 
 
-public class Cells {
+public class CellsUtils {
     
     public static boolean isBomb(Cell c) {
         return c.getType() == Type.MINE;

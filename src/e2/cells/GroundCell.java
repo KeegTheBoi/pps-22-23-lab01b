@@ -2,11 +2,11 @@ package e2.cells;
 
 import java.util.Optional;
 
-public class SimpleCell extends AbstractCell {
+public class GroundCell extends AbstractCell {
 
     private Optional<Integer> value;
 
-    public SimpleCell(int value) {
+    public GroundCell(int value) {
         super(Status.INVISIBLE);
         this.value = Optional.of(value);
     }

@@ -11,7 +11,7 @@ public interface SweepMiner {
 
     void fillRemaining();
 
-    void action(Coord pos);
+    void unveil(Coord pos);
 
     int bombsSize();
 
