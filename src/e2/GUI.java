@@ -3,9 +3,11 @@ package e2;
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
+import javax.swing.plaf.ColorUIResource;
 
 import e2.Cells.Cell;
 import e2.Cells.Cell.Status;
+import e2.Cells.Cells;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -18,13 +20,19 @@ public class GUI extends JFrame {
     private static final long serialVersionUID = -6218820567019985015L;
     private final Map<JButton,Coord> buttons = new HashMap<>();
     private final Logics logics;
-    private static final int BOMB_SIZE = 4;
+    private Map<Integer, Color> mapColor = new HashMap<>(Map.of(
+         0, Color.DARK_GRAY,
+         1, Color.decode("#006400"),
+         2, Color.decode("#8B0000"),
+         3, Color.BLUE,
+         4, Color.PINK,
+         5, Color.CYAN
+    ));
     
     public GUI(int size, int diffuculty) {
-        this.logics = new LogicsImpl(size, BOMB_SIZE);
+        this.logics = new LogicsImpl(size, diffuculty);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(50*size, 50*size);
-        
         JPanel panel = new JPanel(new GridLayout(size,size));
         this.getContentPane().add(BorderLayout.CENTER,panel);
         
@@ -66,8 +74,9 @@ public class GUI extends JFrame {
                 final JButton jb = new JButton(" ");
                 jb.addActionListener(onClick);
                 jb.setForeground(Color.WHITE);
+                jb.setBackground(Color.BLACK);
                 jb.addMouseListener(onRightClick);
-                this.buttons.put(jb,new Coord(i,j));
+                this.buttons.put(jb,new Coord(j, i));
                 panel.add(jb);
             }
         }
@@ -80,7 +89,7 @@ public class GUI extends JFrame {
     	for (var entry: this.buttons.entrySet()) {
             entry.getKey().setForeground(Color.YELLOW);
             var cell = logics.getResult(entry.getValue());
-            cell.changeVisibility();
+            cell.reveal();
             entry.getKey().setText(this.getText(cell));
     	}
     }
@@ -91,8 +100,6 @@ public class GUI extends JFrame {
                 return "💣";
             case GROUND:
                 return String.valueOf(cell.getCount().get());
-            case FLAG:
-                return "⚑";
             default:
                 return "";
         }
@@ -100,14 +107,22 @@ public class GUI extends JFrame {
 
     private void drawBoard() {
         buttons.forEach((k, v) -> {
-            String text = "";
             var cell = logics.getResult(v);
-            if(cell.getStatus() == Status.VISIBLE) {
+            if(cell.getStatus() == Status.VISIBLE && Cells.isValuable(cell)) {
+                k.setBackground(mapColor.get(cell.getCount().get()));
+                
+                k.setText("<html><font color = black>"+getText(cell)+"</font></html>");
                 k.setEnabled(false);
-            } else if (Cells.isFlag(cell)) {
+                
+                
+            } else if (cell.isFlagged()) {
                 k.setBackground(Color.RED);
-            } 
-            k.setText(getText(cell));
+                k.setText("⚑");
+            } else {
+                k.setText("");
+                k.setBackground(Color.BLACK);
+            }
+            
             
         });
     }

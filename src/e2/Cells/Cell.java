@@ -5,7 +5,7 @@ import java.util.*;
 public interface Cell {
 
     enum Type{
-        MINE, FLAG, GROUND
+        MINE, GROUND
     }
 
     enum Status {
@@ -18,5 +18,7 @@ public interface Cell {
 
     Optional<Integer> getCount();
 
-    void changeVisibility();
+    boolean isFlagged();
+
+    void reveal();
 }

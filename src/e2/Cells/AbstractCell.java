@@ -4,6 +4,7 @@ import java.util.*;
 public abstract class AbstractCell implements Cell{
 
     private Status visibility;
+    protected boolean flag;
 
     public AbstractCell(Status status) {
         this.visibility = status;
@@ -15,8 +16,12 @@ public abstract class AbstractCell implements Cell{
         return visibility;
     }
 
-    public void changeVisibility() {
-        visibility = visibility == Status.VISIBLE ? Status.INVISIBLE : Status.VISIBLE;
+    public boolean isFlagged() {
+        return this.flag;
+    }
+
+    public void reveal() {
+        visibility = Status.VISIBLE;
     }
 
     public abstract Optional<Integer> getCount();

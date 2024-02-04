@@ -1,10 +1,11 @@
-package e2;
+package e2.game;
+
+import e2.Coord;
+import e2.Cells.Cell;
 
 public interface SweepMiner {
     
-    void flag(Coord c);
-
-    void unflag(Coord c);
+    Cell handleFlag(Coord c);
 
     void seedBombs(int diffuculty);
 

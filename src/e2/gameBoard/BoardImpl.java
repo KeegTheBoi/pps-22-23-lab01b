@@ -1,17 +1,19 @@
-package e2;
+package e2.gameBoard;
 
 import java.util.*;
 import java.util.stream.*;
 
+import e2.Coord;
+
 import static java.util.function.Predicate.not;
 
 
-public class MineBoardImpl<C> implements MineBoard<C> {
+public class BoardImpl<C> implements Board<C> {
 
     private int size;
     private final Map<Coord, C> boardMap;
 
-    public MineBoardImpl(int size) {
+    public BoardImpl(int size) {
         this.size = size;
         boardMap = new HashMap<>();
     }
@@ -57,6 +59,11 @@ public class MineBoardImpl<C> implements MineBoard<C> {
     @Override
     public int bound() {
         return size;
+    }
+
+    @Override
+    public int mapSize() {
+        return this.boardMap.size();
     }
 
 }

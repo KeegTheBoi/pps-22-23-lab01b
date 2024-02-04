@@ -1,45 +1,46 @@
-package e2;
+package e2.game;
 
+import e2.Coord;
 import e2.Cells.Cell;
 import e2.Cells.Cells;
-import e2.Cells.FlagCell;
+import e2.Cells.DecoratorCell;
 import e2.Cells.MineCell;
 import e2.Cells.SimpleCell;
+import e2.gameBoard.Board;
 
 import java.util.*;
-import java.util.function.*;
 import static java.util.function.Predicate.not;
 
 public class SweepMinerImpl implements SweepMiner{
     
-    private MineBoard<Cell> board;
-    private int limit;
+    private Board<Cell> board;
+    private Double limit;
     private int hitted;
 
-    public SweepMinerImpl(MineBoard<Cell> board) {
+    public SweepMinerImpl(Board<Cell> board) {
         this.board = board;
     }
 
     @Override
-    public void flag(Coord c) {
-        this.setCoordType(c, FlagCell::new);
+    public Cell handleFlag(Coord c) {
+        if(board.getCell(c) instanceof DecoratorCell cell) {
+            return cell.unwrap();
+        }
+        return new DecoratorCell(board.getCell(c));
     }
 
-    private void setCoordType(Coord c, Supplier<Cell> supplier) {
-        this.board.setValue(c, supplier.get());
-    }
-
-    @Override
-    public void unflag(Coord c) {
-        this.board.getCell(c).changeVisibility();
-    }
 
     @Override
-    public void seedBombs(int diffculty) {
-        limit = board.size() % diffculty;
-        while(board.bound() < limit) {
+    public void seedBombs(int difficulty) {
+        double ratio = (difficulty / 10.0);
+        double filler = board.bound() / 2.0;
+        ratio = ratio < 0.5 ? -ratio : ratio;
+        double scount = ratio * board.bound();
+        limit = board.bound() - (filler - scount);
+        while(board.mapSize() < (int)Math.ceil(limit)) {
             board.setValue(board.randomCoord(), new MineCell());
         }
+        System.out.println(limit);
     }
 
     public void fillRemaining() {
@@ -50,28 +51,32 @@ public class SweepMinerImpl implements SweepMiner{
 
     @Override
     public int bombsSize() {
-        return limit;
+        return (int)Math.ceil(limit);
     }
 
     private int countAdjaxBombs(Coord pos) {
-        return (int)board.adjaxOf(pos).stream().map(board::getCell).filter(Cells::isBomb).count();
+        return (int)board.adjaxOf(pos).stream().map(board::getCell)
+            .filter(Objects::nonNull)
+            .filter(Cells::isBomb).count();
     }
 
     public void action(Coord pos) {
         this.hitted++;
-        board.getCell(pos).changeVisibility();
+        System.out.println(hitted);
+        board.getCell(pos).reveal();
     }
 
     public void recursiveDiscoveryOf(Coord c) {
+        action(c);
         Optional.of(c).map(board::getCell).filter(Cells::isEmpty).filter(e -> !this.isOver(c))
             .ifPresent(h -> board.adjaxOf(c).stream()
                 .map(board::getCell)
+                .filter(Cells::isVeiled)
                 .filter(Cells::isValuable)
-                .filter(not(Cells::isEmpty))
                 .map(board::getCoord)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .forEach(this::action)
+                .forEach(this::recursiveDiscoveryOf)
             );
     }
 

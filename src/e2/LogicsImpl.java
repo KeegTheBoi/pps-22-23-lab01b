@@ -1,21 +1,24 @@
 package e2;
 import e2.Cells.Cell;
+import e2.game.*;
+import e2.gameBoard.*;
 
 public class LogicsImpl implements Logics {
 
     private Coord current;
-    private final MineBoard<Cell> board;
+    private final Board<Cell> board;
     private final SweepMiner game;
 
-    public LogicsImpl(int size, int diffuculty) {
-        board = new MineBoardImpl<Cell>(size);
+    public LogicsImpl(int size, int difficulty) {
+        this.board = new BoardImpl<Cell>(size);
         this.game = new SweepMinerImpl(board);
+        this.game.seedBombs(difficulty);
+        this.game.fillRemaining();
     }
 
     @Override
     public void hit(Coord pos) {
         this.current = pos;
-        game.action(this.current);
         game.recursiveDiscoveryOf(current);
     }
 
@@ -31,7 +34,7 @@ public class LogicsImpl implements Logics {
 
     @Override
     public void flag(Coord pos) {
-        game.flag(pos);
+        board.setValue(pos, game.handleFlag(pos));
     }
 
     @Override

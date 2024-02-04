@@ -1,9 +1,11 @@
-package e2;
+package e2.gameBoard;
 
 import java.util.*;
 import java.util.stream.*;
 
-public interface MineBoard<C> {
+import e2.Coord;
+
+public interface Board<C> {
 
     int size();
 
@@ -20,5 +22,7 @@ public interface MineBoard<C> {
     void setValue(Coord coord, C c);
 
     Stream<Coord> all();
+
+    int mapSize();
 
 }
